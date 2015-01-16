@@ -1,0 +1,446 @@
+/******************************************************************************
+* Copyright (c) 2007, 2014  Ericsson AB
+* All rights reserved. This program and the accompanying materials
+* are made available under the terms of the Eclipse Public License v1.0
+* which accompanies this distribution, and is available at
+* http://www.eclipse.org/legal/epl-v10.html
+*
+* Contributors:
+*   Gabor Bettesch - initial implementation and initial documentation
+******************************************************************************/
+//
+//  File:     ICMP_Types.ttcn
+//  Rev:      R2A
+//  Prodnr:   CNL 113 529
+///////////////////////////////////////////////////////////////////////////////
+//All ICMP messages are implemented from RFC 792, 950,1256, 1393, 1475, 1788, 2521
+//MIP Agent Discovery Extensions from RFC 3344, 3012 are also implemented
+
+module ICMP_Types
+{
+import from General_Types all;
+
+external function f_enc_PDU_ICMP(in PDU_ICMP pdu) return octetstring;
+
+external function f_dec_PDU_ICMP(in octetstring stream) return PDU_ICMP
+  with { extension "prototype(convert)"
+         extension "decode(RAW)"
+       };
+
+
+//Top level PDU
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+type union PDU_ICMP
+{
+  ICMP_EchoReply              echo_reply,
+  ICMP_DestinationUnreachable destination_unreachable,
+  ICMP_SourceQuench           source_quench,
+  ICMP_Redirect               redirect,
+  ICMP_Echo                   echo,
+  ICMP_TimeExceeded           time_exceeded,
+  ICMP_ParameterProblem       parameter_problem,
+  ICMP_Timestamp              timestamp,
+  ICMP_TimestampReply         timestamp_reply,
+  ICMP_InformationRequest     information_request,
+  ICMP_InformationReply       information_reply,
+  ICMP_AddressMaskRequest     address_mask_request,
+  ICMP_AddressMaskReply       address_mask_reply,
+  ICMP_RouterAdvertisement    router_advertisement, //MIP Agent Advertisement
+  ICMP_RouterSolicitation     router_solicitation, //MIP Agent Solicitation
+  ICMP_Traceroute             traceroute,
+  ICMP_ConversionFailed       conversion_failed,
+  ICMP_DomainNameRequest      domain_name_request,
+  ICMP_DomainNameReply        domain_name_reply,
+  ICMP_SecurityFailure        security_failure,
+  ICMP_UnknownMessage         unknown
+} with { variant "TAG( echo_reply,             type_field = 0;
+                       destination_unreachable,type_field = 3;
+                       source_quench,          type_field = 4;
+                       redirect,               type_field = 5;
+                       echo,                   type_field = 8;
+                       time_exceeded,          type_field = 11;
+                       parameter_problem,      type_field = 12;
+                       timestamp,              type_field = 13;
+                       timestamp_reply,        type_field = 14;
+                       information_request,    type_field = 15;
+                       information_reply,      type_field = 16;
+                       address_mask_request,   type_field = 17;
+                       address_mask_reply,     type_field = 18;
+                       router_advertisement,   type_field = 9;
+                       router_solicitation,    type_field = 10;
+                       traceroute,             type_field = 30;
+                       conversion_failed,      type_field = 31;
+                       domain_name_request,    type_field = 37;
+                       domain_name_reply,      type_field = 38;
+                       security_failure,       type_field = 40)"}
+
+
+//ICMP Messages
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+//The checksum field will be filled with correct value during the encoding.
+//By decoding its correctness is not checked
+
+//ICMP Echo Reply Message - RFC 792
+type record ICMP_EchoReply
+{
+  integer                 type_field, // (0)
+  integer                 code,       // (0)
+  OCT2                    checksum,
+  OCT2                    identifier,
+  OCT2                    sequence_number,
+  octetstring             data
+}
+
+//ICMP Destination Unreachable Message - RFC 792
+type record ICMP_DestinationUnreachable
+{
+  integer                 type_field, // (3)
+  integer                 code,       // (0..15)
+  OCT2                    checksum,
+  OCT4                    unused,
+  octetstring             original_ip_msg
+}
+
+//ICMP Source Quench Message - RFC 792
+type record ICMP_SourceQuench
+{
+  integer                type_field, // (4)
+  integer                code,       // (0)
+  OCT2                   checksum,
+  OCT4                   unused,
+  octetstring            original_ip_msg
+}
+
+//ICMP Redirect Message - RFC 792
+type record ICMP_Redirect
+{
+  integer                type_field, // (5)
+  integer                code,       // (0..3)
+  OCT2                   checksum,
+  OCT4                   gateway_internet_address,
+  octetstring            original_ip_msg
+}
+
+//ICMP Echo Message - RFC 792
+type record ICMP_Echo
+{
+  integer                type_field, // (8)
+  integer                code,       // (0)
+  OCT2                   checksum,
+  OCT2                   identifier,
+  OCT2                   sequence_number,
+  octetstring            data
+}
+
+//ICMP Time Exceeded Message - RFC 792
+type record ICMP_TimeExceeded
+{
+  integer                 type_field, // (11)
+  integer                 code,       // (0..1)
+  OCT2                    checksum,
+  OCT4                    unused,
+  octetstring             original_ip_msg
+}
+
+//ICMP Parameter Problem Message - RFC 792
+type record ICMP_ParameterProblem
+{
+  integer                 type_field, // (12)
+  integer                 code,       // (0..2)
+  OCT2                    checksum,
+  integer                 pointer,
+  OCT3                    unused,
+  octetstring             original_ip_msg
+}
+
+//ICMP Timestamp Message - RFC 792
+type record ICMP_Timestamp
+{
+  integer                 type_field, // (13)
+  integer                 code,       // (0)
+  OCT2                    checksum,
+  OCT2                    identifier,
+  OCT2                    sequence_number,
+  OCT4                    originate_timestamp,
+  OCT4                    receive_timestamp,
+  OCT4                    transmit_timestamp
+}
+
+//ICMP Timestamp Reply Message - RFC 792
+type record ICMP_TimestampReply
+{
+  integer                 type_field, // (14)
+  integer                 code,       // (0)
+  OCT2                    checksum,
+  OCT2                    identifier,
+  OCT2                    sequence_number,
+  OCT4                    originate_timestamp,
+  OCT4                    receive_timestamp,
+  OCT4                    transmit_timestamp
+}
+
+//ICMP Information Request Message - RFC 792
+type record ICMP_InformationRequest
+{
+  integer                 type_field, // (15)
+  integer                 code,       // (0)
+  OCT2                    checksum,
+  OCT2                    identifier,
+  OCT2                    sequence_number
+}
+
+//ICMP Information Reply Message - RFC 792
+type record ICMP_InformationReply
+{
+  integer                 type_field, // (16)
+  integer                 code,       // (0)
+  OCT2                    checksum,
+  OCT2                    identifier,
+  OCT2                    sequence_number
+}
+
+
+//ICMP Address Mask Messages - RFC 950
+//-----------------------------------------------------------------------------
+//ICMP Address Mask Request Message - RFC 950
+type record ICMP_AddressMaskRequest 
+{
+  integer                 type_field, // (17)
+  integer                 code,       // (0)
+  OCT2                    checksum,
+  OCT2                    identifier,
+  OCT2                    sequence_number,
+  OCT4                    address_mask
+}
+
+//ICMP Address Mask Reply Message - RFC 950
+type record ICMP_AddressMaskReply 
+{
+  integer                 type_field, // (18)
+  integer                 code,       // (0)
+  OCT2                    checksum,
+  OCT2                    identifier,
+  OCT2                    sequence_number,
+  OCT4                    address_mask
+}
+
+
+//ICMP Router (MIP Agent) Discovery Messages - RFC 1256, RFC 3344
+//-----------------------------------------------------------------------------
+//ICMP Router (MIP Agent) Advertisement Message - RFC 1256, RFC 3344
+type record ICMP_RouterAdvertisement
+{
+  integer                 type_field, // (9)
+  integer                 code,       // (0,16)
+  OCT2                    checksum,
+  integer                 num_addrs,
+  integer                 addr_entry_size,
+  integer                 lifetime,
+  ICMP_RouterAddressList  router_address_list,
+  ICMP_MIP_AgentDiscoveryExtensions  extensions
+} with { variant (lifetime)"FIELDLENGTH(16)";
+         variant (lifetime)"BYTEORDER(last)";
+         variant (num_addrs) "LENGTHTO(router_address_list)";
+	 variant (num_addrs) "UNIT(elements)"}
+//TTL 1, Dest IP addr 224.0.0.1 or 255.255.255.255
+
+//ICMP Router (MIP Agent) Solicitation Message - RFC 1256
+type record ICMP_RouterSolicitation 
+{
+  integer                 type_field, // (10)
+  integer                 code,       // (0)
+  OCT2                    checksum,
+  OCT4                    reserved
+}
+//TTL 1, dest addr 224.0.0.11, own source address
+
+
+//ICMP Traceroute Messages - RFC 1393
+//-----------------------------------------------------------------------------
+//ICMP Traceroute Message - RFC 1393
+type record ICMP_Traceroute 
+{
+  integer                 type_field, // (30)
+  integer                 code,       // (0..1)
+  OCT2                    checksum,
+  OCT2                    id_number,
+  OCT2                    unused,
+  integer                 outbound_hop_count,
+  integer                 return_hop_count,
+  OCT4                    output_link_speed,
+  OCT4                    output_link_mtu
+} with { variant (outbound_hop_count)"FIELDLENGTH(16)";
+         variant (outbound_hop_count)"BYTEORDER(last)";
+         variant (return_hop_count)"FIELDLENGTH(16)";
+         variant (return_hop_count)"BYTEORDER(last)";
+}
+
+
+//ICMP Conversion Failed Messages - RFC 1475
+//-----------------------------------------------------------------------------
+//ICMP Conversion Failed Message - RFC 1475
+type record ICMP_ConversionFailed 
+{
+  integer                 type_field, // (31)
+  integer                 code,       // (0..11)
+  OCT2                    checksum,
+  OCT4                    ptr_to_problem_area,
+  octetstring             problematic_datagram
+}
+
+
+//ICMP Domain Name Messages - RFC 1788
+//-----------------------------------------------------------------------------
+//ICMP Domain Name Request Message - RFC 1788
+type record ICMP_DomainNameRequest 
+{
+  integer                 type_field, // (37)
+  integer                 code,       // (0)
+  OCT2                    checksum,
+  OCT2                    identifier,
+  OCT2                    sequence_number
+}
+
+//ICMP Domain Name Reply Message - RFC 1788
+type record ICMP_DomainNameReply 
+{
+  integer                 type_field, // (38)
+  integer                 code,       // (0)
+  OCT2                    checksum,
+  OCT2                    identifier,
+  OCT2                    sequence_number,
+  OCT4                    time_to_live,
+  ICMP_Domain_Name_list   domain_names
+}
+
+
+//ICMP Security Failure Messages - RFC 2521
+//-----------------------------------------------------------------------------
+//ICMP Security Failure Message - RFC 2521
+type record ICMP_SecurityFailure
+{
+  integer                 type_field, // (40)
+  integer                 code,       // (0..5)
+  OCT2                    checksum,
+  OCT2                    reserved,
+  OCT2                    pointer,
+  octetstring             original_ip_msg
+}
+
+
+//Unknown ICMP Message
+//-----------------------------------------------------------------------------
+type octetstring ICMP_UnknownMessage;
+
+
+
+//ICMP message elements
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+//ICMP Domain Name Message Elements
+//-----------------------------------------------------------------------------
+type set of charstring ICMP_Domain_Name_list
+
+
+//ICMP Router (MIP Agent) Advertisement Message Elements
+//-----------------------------------------------------------------------------
+type set of ICMP_RouterAddressEntity ICMP_RouterAddressList
+
+type record ICMP_RouterAddressEntity
+{
+  OCT4    router_ip_address,
+  integer preference_level
+} with { variant (preference_level)"FIELDLENGTH(32)";
+         variant (preference_level)"BYTEORDER(last)";
+}
+
+
+type set of ICMP_MIP_AgentDiscoveryExtension ICMP_MIP_AgentDiscoveryExtensions
+
+type union ICMP_MIP_AgentDiscoveryExtension
+{
+  ICMP_MIP_MobilityAgentAdvertisement_Extension mobility_agent_advertisement,
+  ICMP_MIP_PrefixLengths_Extension              prefix_lengths,
+  ICMP_MIP_OneBytePadding_Extension             one_byte_padding,
+  ICMP_MIP_Challenge_Extension                  challenge //RFC 3012
+} with { variant "TAG( mobility_agent_advertisement, type_field = 16;
+                       prefix_lengths,               type_field = 19;
+                       one_byte_padding,             type_field = 0;
+                       challenge,                    type_field = 24;)"
+}
+
+
+//MIP Agent Discovery Extensions - RFC 3344
+//-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+//Mobility Agent Advertisement Extension - RFC 3344
+type record ICMP_MIP_MobilityAgentAdvertisement_Extension
+{
+  integer                           type_field, // (16)
+  integer                           length_field,
+  integer                           seq_nr, //0..H'FFFF-> 256...H'FFFF -> 256
+  integer                           registration_lifetime,
+  ICMP_MIP_AgentAdvertisementFlags1 flags1,
+  ICMP_MIP_AgentAdvertisementFlags2 flags2,
+  ICMP_MIP_CareOfAddressList        care_of_adresses
+} with { variant (seq_nr)"FIELDLENGTH(16)";
+         variant (seq_nr)"BYTEORDER(last)";
+         variant (registration_lifetime)"FIELDLENGTH(16)";
+         variant (registration_lifetime)"BYTEORDER(last)";
+         variant (length_field)"LENGTHTO(seq_nr,registration_lifetime,
+                                         flags1,flags2,care_of_adresses)";
+};
+
+type record ICMP_MIP_AgentAdvertisementFlags1
+{
+  BIT1  R_bit,
+  BIT1  B_bit,
+  BIT1  H_bit,
+  BIT1  F_bit,
+  BIT1  M_bit,
+  BIT1  G_bit,
+  BIT1  r_bit,
+  BIT1  T_bit
+} with { variant "FIELDORDER(msb)";}
+
+type record ICMP_MIP_AgentAdvertisementFlags2
+{
+  BIT1  U_bit,
+  BIT7  reserved
+} with { variant "FIELDORDER(msb)";}
+
+type set of OCT4 ICMP_MIP_CareOfAddressList;
+
+//Prefix Lengths Extension - RFC 3344
+type record ICMP_MIP_PrefixLengths_Extension
+{
+  integer                   type_field, // (19)
+  integer                   length_field,
+  ICMP_MIP_PrefixLengthList prefix_lengts
+} with { variant "PRESENCE(type_field = 19)";
+         variant (length_field)"LENGTHTO(prefix_lengts)";
+};
+
+type record of integer ICMP_MIP_PrefixLengthList;
+
+//One Byte Padding Extension - RFC 3344
+type record ICMP_MIP_OneBytePadding_Extension
+{
+  integer                   type_field // (0)
+}
+
+//Challenge Extension - RFC 3012
+type record ICMP_MIP_Challenge_Extension
+{
+  integer                   type_field, // (24)
+  integer                   length_field,
+  octetstring               challenge
+} with { variant "PRESENCE(type_field = 24)";
+         variant (length_field)"LENGTHTO(challenge)";
+};
+
+} with {encode "RAW"}
