@@ -1,0 +1,150 @@
+---
+Author: Gábor Bettesch
+Version: 198 17-CNL 113 529, Rev. A
+Date: 2008-01-14
+
+---
+= ICMP Protocol Modules for TTCN-3 Toolset with TITAN, User Guide
+:author: Gábor Bettesch
+:revnumber: 198 17-CNL 113 529, Rev. A
+:revdate: 2008-01-14
+:toc:
+
+== About This Document
+
+=== How to Read This Document
+
+This is the User Guide for the ICMP protocol module. The ICMP protocol module is developed for the TTCN-3 Toolset with TITAN. This document should be read together with Function Specification <<_4, [4]>>.
+
+=== Presumed Knowledge
+
+To use this protocol module the knowledge of the TTCN-3 language <<_1, [1]>> is essential.
+
+== System Requirements
+
+Protocol modules are a set of TTCN-3 source code files that can be used as part of TTCN-3 test suites only. Hence, protocol modules alone do not put specific requirements on the system used. However, in order to compile and execute a TTCN-3 test suite using the set of protocol modules the following system requirements must be satisfied:
+
+* TITAN TTCN-3 Test Executor installed. For installation guide see <<_3, [3]>>.
+
+= Protocol Modules
+
+== Overview
+
+Protocol modules implement the message structures of the corresponding protocol in a formalized way, using the standard specification language TTCN-3. This allows defining of test data (templates) in the TTCN-3 language <<_1, [1]>> and correctly encoding/decoding messages when executing test suites using the TITAN TTCN-3 test environment.
+
+Protocol modules are using TITAN’s RAW encoding attributes <<_2, [2]>> and hence are usable with the TITAN test toolset only.
+
+The table below contains the implemented ICMP messages and the corresponding TTCN-3 type records. Using those type records, templates can be defined to send and receive a given message.
+
+[cols=",,",options="header",]
+|=======================================================================
+|Message name |Reference |Corresponding type record in __ICMP_Types.ttcn__
+|Echo Reply |<<_5, [5]>> p.13 |ICMP_EchoReply
+|Destination Unreachable |<<_5, [5]>> p.3 |ICMP_DestinationUnreachable
+|Source Quench |<<_5, [5]>> p.9 |ICMP_SourceQuench
+|Redirect |<<_5, [5]>> p.11 |ICMP_Redirect
+|Echo |<<_5, [5]>> p.13 |ICMP_Echo
+|Time Exceeded |<<_5, [5]>> p.5 |ICMP_TimeExceeded
+|Parameter Problem |<<_5, [5]>> p.7 |ICMP_ParameterProblem
+|Timestamp |<<_5, [5]>> p.15 |ICMP_Timestamp
+|Timestamp Reply |<<_5, [5]>> p.15 |ICMP_Timestamp Reply
+|Information Request |<<_5, [5]>> p.17 |ICMP_InformationRequest
+|Information Reply |<<_5, [5]>> p.17 |ICMP_InformationReply
+|Address Mask Request |<<_6, [6]>> App.I |ICMP_AddressMaskRequest
+|Address Mask Reply |<<_6, [6]>> App.I |ICMP_AddressMaskReply
+|Router Advertisement, |<<_7, [7]>> p. 4 |ICMP_RouterAdvertisement
+|Router Solicitation, |<<_7, [7]>> p.4 |ICMP_RouterSolicitation
+|Traceroute |<<_8, [8]>> 2.3 |ICMP_Traceroute
+|Conversion Failed |<<_9, [9]>> 6.2. |ICMP_ConversionFailed
+|Domain Name Request |<<_10, [10]>> 2. |ICMP_DomainNameRequest
+|Domain Name Reply |<<_10, [10]>> 3. |ICMP_DomainNameReply
+|Security Failure |<<_11, [11]>> 2. |ICMP_SecurityFailure
+|=======================================================================
+
+The table below contains the implemented MIP Agent Advertisement Extensions (`extensions` field in `ICMP_RouterAdvertisement`) and the corresponding TTCN-3 type records
+
+[width="100%",cols="34%,33%,33%",options="header",]
+|======================================================================================
+|Extension name |Reference |Corresponding type record in __ICMP_Types.ttcn__
+|Mobile Agent Advertisement |<<_12, [12]>> 2.1.1. |ICMP_MIP_MobilityAgentAdvertisement_Extension
+|Prefix Length |<<_12, [12]>> 2.1.2. |ICMP_MIP_PrefixLengths_Extension
+|One Byte Padding |<<_12, [12]>> 2.1.3. |ICMP_MIP_OneBytePadding_Extension
+|Challenge |<<_13, [13]>> 2. |ICMP_MIP_Challenge_Extension
+|======================================================================================
+
+== Installation
+
+The set of protocol modules can be used in developing TTCN-3 test suites using any text editor. However, to make the work more efficient a TTCN-3-enabled text editor is recommended (for example, `nedit`, `xemacs`). Since the TRH protocol module is used as a part of a TTCN-3 test suite, this requires TTCN-3 Test Executor and a C compiler be installed before the module can be compiled and executed together with other parts of the test suite. For more details on the installation of TTCN-3 Test Executor see the relevant parts of <<_2, [2]>>.
+
+== Encoding Feature
+
+The encoder updates the checksum field with the correct value.
+
+= Terminology
+
+TITAN TTCN-3 Test Executor.
+
+= Abbreviations
+
+IETF:: Internet Engineering Task Force
+
+IP:: Internet Protocol
+
+ICMP:: Internet Control Message Protocol
+
+MIP:: Mobile IP
+
+RFC:: Request for Comments
+
+TTCN-3:: Testing and Test Control Notation version 3
+
+= References
+
+[[_1]]
+[1] ETSI ES 201 873–1 v.3.1.1 (06/2005) +
+The Testing and Test Control Notation version 3. Part 1: Core Language
+
+[[_2]]
+[2] Programmer’s Technical Reference for the TITAN TTCN-3 Test Executor
+
+[[_3]]
+[3] Installation Guide for the TITAN TTCN-3 Test Executor
+
+[[_4]]
+[4] ICMP Protocol Modules for TTCN-3 Toolset with TITAN, Function Specification
+
+[[_5]]
+[5] IETF https://tools.ietf.org/html/rfc792[RFC 792] +
+Internet Control Message Protocol
+
+[[_6]]
+[6] IETF https://tools.ietf.org/html/rfc950[RFC 950] +
+Internet Standard Subnetting Procedure
+
+[[_7]]
+[7] IETF https://tools.ietf.org/html/rfc1256[RFC 1256] +
+ICMP Router Discovery Messages
+
+[[_8]]
+[8] IETF https://tools.ietf.org/html/rfc1393[RFC 1393] +
+Traceroute Using an IP Option
+
+[[_9]]
+[9] IETF https://tools.ietf.org/html/rfc1475[RFC 1475] +
+TP/IX: The Next Internet
+
+[[_10]]
+[10] IETF https://tools.ietf.org/html/rfc1788[RFC 1788] +
+ICMP Domain Name Messages
+
+[[_11]]
+[11] IETF https://tools.ietf.org/html/rfc2521[RFC 2521] +
+ICMP Security Failures Messages
+
+[[_12]]
+[12] IETF https://tools.ietf.org/html/rfc3344[RFC 3344] +
+IP Mobility Support for IPv4
+
+[[_13]]
+[13] IETF https://tools.ietf.org/html/rfc3012[RFC 3012] +
+Mobile IPv4 Challenge/Response Extensions

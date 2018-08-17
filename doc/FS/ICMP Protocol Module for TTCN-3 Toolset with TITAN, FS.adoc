@@ -1,0 +1,127 @@
+---
+Author: Gábor Bettesch
+Version: 155 17-CNL 113 529, Rev. A
+Date: 2008-01-14
+
+---
+= ICMP Protocol Modules for TTCN-3 Toolset with TITAN, Function Specification
+:author: Gábor Bettesch
+:revnumber: 155 17-CNL 113 529, Rev. A
+:revdate: 2008-01-14
+:toc:
+
+== How to Read This Document
+
+This is the Function Specification for the set of ICMP protocol modules. ICMP protocol modules are developed for the TTCN-3 Toolset with TITAN.
+
+== Scope
+
+The purpose of this document is to specify the content of the ICMP protocol modules.
+
+= General
+
+Protocol modules implement the message structures of the related protocol in a formalized way, using the standard specification language TTCN-3. This allows defining of test data (templates) in the TTCN-3 language and correctly encoding/decoding messages when executing test suites using the TITAN TTCN-3 test environment.
+
+Protocol modules are using TITAN’s RAW encoding attributes <<_1, [1]>> and hence are usable with the TITAN test toolset only.
+
+= Functional Specification
+
+== Protocol Version Implemented
+
+This protocol module contains the protocol messages and elements of the ICMP protocol (see <<_3, [3]>>, <<_4, [4]>>, <<_5, [5]>>, <<_6, [6]>>, <<_7, [7]>>, <<_8, [8]>>, <<_9, [9]>>), with the extensions for MIP available in <<_10, [10]>>, <<_11, [11]>>.
+
+[[modifications-deviations-related-to-the-protocol-specification]]
+== Modifications/Deviations Related to the Protocol Specification
+
+=== Implemented Messages
+
+All message types listed in protocol descriptions are implemented.
+
+[[protocol-modifications-deviations]]
+=== Protocol Modifications/Deviations
+
+None.
+
+[[encoding-decoding-and-other-related-functions]]
+== Encoding/Decoding and Other Related Functions
+
+This product also contains encoding/decoding functions that provide for the correct encoding of messages when sent from TITAN and correct decoding of messages when received by TITAN. The encoder updates the checksum field with the correct value. Implemented encoding/decoding functions:
+
+[cols=3*,options=header]
+|===
+
+|Name
+|Type of formal parameters
+|Type of return value
+
+|`f_enc_PDU_ICMP`
+|PDU_ICMP
+|octetstring
+
+|`f_dec_PDU_ICMP`
+|octetstring
+|PDU_ICMP
+|===
+
+= Terminology
+
+TITAN TTCN-3 Test Executor.
+
+= Abbreviations
+
+IETF:: Internet Engineering Task Force
+
+IP:: Internet Protocol
+
+ICMP:: Internet Control Message Protocol
+
+MIP:: Mobile IP
+
+RFC:: Request for Comments
+
+TTCN-3:: Testing and Test Control Notation version 3
+
+= References
+
+[[_1]]
+[1] Programmer’s Technical Reference for the TITAN TTCN-3 Test Executor
+
+[[_2]]
+[2] ETSI ES 201 873-1 v.3.1.1 (06/2005) +
+The Testing and Test Control Notation version 3. Part 1: Core Language
+
+[[_3]]
+[3] IETF https://tools.ietf.org/html/rfc792[RFC 792] +
+Internet Control Message Protocol
+
+[[_4]]
+[4] IETF https://tools.ietf.org/html/rfc950[RFC 950] +
+Internet Standard Subnetting Procedure
+
+[[_5]]
+[5] IETF https://tools.ietf.org/html/rfc1256[RFC 1256] +
+ICMP Router Discovery Messages
+
+[[_6]]
+[6] IETF https://tools.ietf.org/html/rfc1393[RFC 1393] +
+Traceroute Using an IP Option
+
+[[_7]]
+[7] IETF https://tools.ietf.org/html/rfc1475[RFC 1475] +
+TP/IX: The Next Internet
+
+[[_8]]
+[8] IETF https://tools.ietf.org/html/rfc1788[RFC 1788] +
+ICMP Domain Name Messages
+
+[[_9]]
+[9] IETF https://tools.ietf.org/html/rfc2521[RFC 2521] +
+ICMP Security Failures Messages
+
+[[_10]]
+[10] IETF https://tools.ietf.org/html/rfc3344[RFC 3344] +
+IP Mobility Support for IPv4
+
+[[_11]]
+[11] IETF https://tools.ietf.org/html/rfc3012[RFC 3012] +
+Mobile IPv4 Challenge/Response Extensions
